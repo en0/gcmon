@@ -1,0 +1,32 @@
+@startuml
+object System {
+    monitor googlecast events and build
+    usage statistics.
+}
+
+object BedroomTV {
+    Watch Netflix and Youtube.
+}
+
+object OfficeTV {
+    Watch Netflix and Youtube.
+}
+
+object LivingRoom {
+    Listen to music
+}
+
+object BedroomMini {
+    Listen to music
+}
+
+object LoftMini {
+    Listen to music
+}
+
+BedroomTV --> System
+OfficeTV --> System
+System <-- LivingRoom
+System <-- BedroomMini
+System <-- LoftMini
+@enduml

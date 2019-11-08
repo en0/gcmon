@@ -1,0 +1,45 @@
+@startuml
+package "System" {
+    object gcmon {
+        Monitor Google Cast events
+        and publish them to the
+        message broker.
+    }
+
+    object gcportal {
+        Django application to
+        view reports and monitor
+        active sessions.
+    }
+
+    object RabbitMQ {
+        Message broker used to pass streams
+        between the different parts of the
+        system.
+    }
+
+    object gccalc {
+        Calculate metrics from streams
+    }
+
+    object Redis {
+        Stores calculated
+        metrics for reporting.
+    }
+}
+
+object CastingDevices {
+    Various casting devices
+}
+
+object ClientBrowser {
+    Views reports
+}
+
+CastingDevices <-- gcmon
+gcmon --> RabbitMQ
+RabbitMQ <-> gccalc
+Redis <-- gccalc
+gcportal -> Redis
+ClientBrowser --> gcportal
+@enduml

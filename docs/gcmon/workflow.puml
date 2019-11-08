@@ -1,0 +1,13 @@
+@startuml
+(*)  -> "Find all the cast devices."
+--> "For Each cast device"
+--> "Register Listener"
+--> "For Each cast device"
+-> "Begin Consuming Events"
+--> "For each event"
+--> "Create Message"
+-> "Publish to MQ"
+--> "For each event"
+-> (*)
+
+@enduml

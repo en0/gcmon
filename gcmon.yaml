@@ -1,0 +1,7 @@
+# GCMON Configuration File
+---
+MessageBroker:
+  Type: RabbitMQ
+  Exchange: GCMedia
+  RouteKey: gcevents
+  ConnectionString: "amqp://root:password@localhost"

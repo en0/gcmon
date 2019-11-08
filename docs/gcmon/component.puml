@@ -1,0 +1,30 @@
+@startuml
+package "gcmon" {
+
+    class CastDevice {
+        Represents a
+        googlecast device
+        ==
+        + Name
+        + Register(listener)
+    }
+
+    class StatusMediaListener {
+        Receives status updates
+        and publishes them on MQ
+        ==
+        - MessageBroker
+        + NewMediaStatus(status)
+    }
+
+    class MessageBroker {
+        Publishes messages onto
+        RabbitMQ Exchange
+        ==
+        - ExchangeName
+        + Publish
+    }
+}
+
+StatusMediaListener -> MessageBroker
+@enduml
