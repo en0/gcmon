@@ -32,10 +32,10 @@ class MessageCreatorInterface(ABC):
 
 class ConfigurationInterface(ABC):
     @abstractmethod
-    def get(self, key: str):
+    def get(self, key: str) -> any:
         raise NotImplemented()
 
     @abstractmethod
-    def get_section(self, key: str):
+    def get_section(self, key: str) -> "ConfigurationInterface":
         raise NotImplemented()
 

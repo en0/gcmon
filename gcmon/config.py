@@ -3,12 +3,14 @@ from os import environ
 from os.path import exists
 from typing import List, Union
 
+from gcmon.types import ConfigurationInterface
 
-class Configuration:
+
+class Configuration(ConfigurationInterface):
     def __init__(self, source: dict):
         self.__source = source
 
-    def get(self, key: str):
+    def get(self, key: str) -> any:
         root = self.__source
         for k in key.split(":"):
             if k in root:
@@ -17,7 +19,7 @@ class Configuration:
                 return None
         return root
 
-    def get_section(self, key: str):
+    def get_section(self, key: str) -> ConfigurationInterface:
         val = self.get(key)
         if isinstance(val, dict):
             return Configuration(val)
@@ -35,13 +37,13 @@ class ConfigurationLoader:
     def __init__(self, path: str = None):
         self.__path = path
 
-    def load(self) -> Configuration:
+    def load(self) -> ConfigurationInterface:
         path = self.__get_usable_path()
         with open(path, "r") as fd:
             source = yaml.load(fd, Loader=yaml.SafeLoader)
             return Configuration(source)
 
-    def __get_usable_path(self):
+    def __get_usable_path(self) -> str:
         try:
             return next(p for p in self.__get_paths() if exists(p))
         except StopIteration:
