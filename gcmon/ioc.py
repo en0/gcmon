@@ -2,19 +2,17 @@ from pyioc3 import StaticContainerBuilder, ScopeEnum
 from pychromecast import get_chromecasts
 
 from gcmon.cast_listener import CastListener
-from gcmon.config import ConfigurationLoader, Configuration
 from gcmon.message_creator import MessageCreator
 from gcmon.types import GetChromecastDelegate, EntryInterface, CastListenerInterface, MessageCreatorInterface, \
-    MessageBrokerInterface
+    MessageBrokerInterface, ConfigurationInterface
 
 
-def build_entry(entry_type: EntryInterface, config_path: str = None) -> EntryInterface:
+def build_entry(entry_type: EntryInterface, config: ConfigurationInterface) -> EntryInterface:
 
-    config = ConfigurationLoader(config_path).load()
     ioc_builder = StaticContainerBuilder()
 
     ioc_builder.bind_constant(
-        annotation=Configuration,
+        annotation=ConfigurationInterface,
         value=config)
 
     ioc_builder.bind_constant(

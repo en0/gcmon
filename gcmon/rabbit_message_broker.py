@@ -1,15 +1,14 @@
 import pika
 from pika.channel import Channel
 
-from gcmon.config import Configuration
-from gcmon.types import MessageBrokerInterface
+from gcmon.types import MessageBrokerInterface, ConfigurationInterface
 import json
 
 
 class RabbitMessageBroker(MessageBrokerInterface):
     __channel: Channel
 
-    def __init__(self, config: Configuration):
+    def __init__(self, config: ConfigurationInterface):
         config = config.get_section("MessageBroker")
         self.__con_str = config.get("ConnectionString")
         self.__exchange_name = config.get("Exchange") or "gcmon_events"
