@@ -1,8 +1,11 @@
-from gcmon.config import ConfigurationLoader
+import signal
+from threading import Event
+
+from dnry.config import ConfigFactory
+
+from gcmon.config import ConfigSource
 from gcmon.ioc import build_entry
 from gcmon.types import GetChromecastDelegate, CastListenerInterface
-from threading import Event
-import signal
 
 
 class Entry:
@@ -27,10 +30,6 @@ class Entry:
 
 
 def main():
-    from argparse import ArgumentParser
-    ap = ArgumentParser(description="Publish Google Cast events to a message broker")
-    ap.add_argument("-c", "--config", help="Path to a configuration file.")
-    opts = ap.parse_args()
-    config = ConfigurationLoader(opts.config).load()
+    config = ConfigFactory([ConfigSource()]).build()
     entry = build_entry(Entry, config)
     entry()

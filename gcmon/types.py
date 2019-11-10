@@ -28,14 +28,3 @@ class MessageCreatorInterface(ABC):
     @abstractmethod
     def create_message(self, device: Chromecast, status: MediaStatus):
         raise NotImplemented()
-
-
-class ConfigurationInterface(ABC):
-    @abstractmethod
-    def get(self, key: str) -> any:
-        raise NotImplemented()
-
-    @abstractmethod
-    def get_section(self, key: str) -> "ConfigurationInterface":
-        raise NotImplemented()
-

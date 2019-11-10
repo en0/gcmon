@@ -1,18 +1,19 @@
+from dnry.config import IConfigSection
 from pyioc3 import StaticContainerBuilder, ScopeEnum
 from pychromecast import get_chromecasts
 
 from gcmon.cast_listener import CastListener
 from gcmon.message_creator import MessageCreator
 from gcmon.types import GetChromecastDelegate, EntryInterface, CastListenerInterface, MessageCreatorInterface, \
-    MessageBrokerInterface, ConfigurationInterface
+    MessageBrokerInterface
 
 
-def build_entry(entry_type: EntryInterface, config: ConfigurationInterface) -> EntryInterface:
+def build_entry(entry_type: EntryInterface, config: IConfigSection) -> EntryInterface:
 
     ioc_builder = StaticContainerBuilder()
 
     ioc_builder.bind_constant(
-        annotation=ConfigurationInterface,
+        annotation=IConfigSection,
         value=config)
 
     ioc_builder.bind_constant(

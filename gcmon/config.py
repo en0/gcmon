@@ -1,60 +1,43 @@
-import yaml
-from os import environ
-from os.path import exists
-from typing import List, Union
+from argparse import ArgumentParser
 
-from gcmon.types import ConfigurationInterface
+from dnry.config import IConfigSource, IConfigSection, IConfigFactory
+from dnry.config.arg import ArgumentSource
+from dnry.config.delegate import DelegateSource
+from dnry.config.yaml import YamlSource
+from dnry.config.environ import EnvironmentSource
 
 
-class Configuration(ConfigurationInterface):
-    def __init__(self, source: dict):
-        self.__source = source
+class ConfigSource(IConfigSource):
+    def load(self, fact: IConfigFactory, conf: IConfigSection) -> dict:
 
-    def get(self, key: str) -> any:
-        root = self.__source
-        for k in key.split(":"):
-            if k in root:
-                root = root[k]
+        # This delegate is called when the configuration is built
+        def delegate_load(delegate_fact: IConfigFactory, delegate_conf: IConfigSection):
+
+            if conf.has("config"):
+                # User overrides configuration
+                delegate_fact.add_source(YamlSource(conf.get("config")))
             else:
-                return None
-        return root
+                # Default configuration files if user didn't specify
+                delegate_fact.add_source(YamlSource([
+                    "./gcmon.yaml",
+                    "~/.config/gcmon/gcmon.yaml",
+                    "/etc/gcmon/gcmon.yaml",
+                ]))
 
-    def get_section(self, key: str) -> ConfigurationInterface:
-        val = self.get(key)
-        if isinstance(val, dict):
-            return Configuration(val)
-        return None
+            # Allow environment variables override config files
+            delegate_fact.add_source(EnvironmentSource("GCMON_"))
 
+            # Commandline overrides win everything - they where already parsed.
+            # Adding it here will push it to the highest priority.
+            delegate_fact.add_configuration(delegate_conf)
 
-class ConfigurationLoader:
-    environment_key = "GCMON_CONFIG_PATH"
-    default_paths = [
-        "./gcmon.yaml",
-        "~/.config/gcmon/gcmon.yaml",
-        "/etc/gcmon/gcmon.yaml",
-    ]
+        # Setup commandline arguments and add as a configuration source.
+        ap = ArgumentParser(description="Google Cast Monitor")
+        ap.add_argument("-c", "--config", help="Identify a configuration file.")
+        ap.add_argument("--MessageBroker:Type", help="Identify the message broker type.")
 
-    def __init__(self, path: str = None):
-        self.__path = path
+        # Add a configuration delegate to load the remaining configs.
+        fact.add_source(DelegateSource(delegate_load))
 
-    def load(self) -> ConfigurationInterface:
-        path = self.__get_usable_path()
-        with open(path, "r") as fd:
-            source = yaml.load(fd, Loader=yaml.SafeLoader)
-            return Configuration(source)
-
-    def __get_usable_path(self) -> str:
-        try:
-            return next(p for p in self.__get_paths() if exists(p))
-        except StopIteration:
-            raise RuntimeError("Configuration Error: Unable to find configuration file.")
-
-    def __get_paths(self) -> List[str]:
-        if self.__path is not None:
-            return [ self.__path ]
-        elif ConfigurationLoader.environment_key in environ:
-            return [ environ.get(ConfigurationLoader.environment_key) ]
-        else:
-            return ConfigurationLoader.default_paths
-
-
+        # Return the argparser object as a ArgumentSource
+        return ArgumentSource(ap).load(fact, conf)

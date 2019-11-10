@@ -1,14 +1,15 @@
 import pika
+from dnry.config import IConfigSection
 from pika.channel import Channel
 
-from gcmon.types import MessageBrokerInterface, ConfigurationInterface
+from gcmon.types import MessageBrokerInterface
 import json
 
 
 class RabbitMessageBroker(MessageBrokerInterface):
     __channel: Channel
 
-    def __init__(self, config: ConfigurationInterface):
+    def __init__(self, config: IConfigSection):
         config = config.get_section("MessageBroker")
         self.__con_str = config.get("ConnectionString")
         self.__exchange_name = config.get("Exchange") or "gcmon_events"
