@@ -1,7 +1,10 @@
 # GCMON Configuration File
 ---
 MessageBroker:
-  Type: RabbitMQ
-  Exchange: GCMedia
-  RouteKey: gcevents
-  ConnectionString: "amqp://root:password@localhost"
+    #Type: RabbitMQ
+    #Exchange: GCMedia
+    #RouteKey: gcevents
+    #ConnectionString: "amqp://root:password@localhost"
+  Type: Kafka
+  Topic: mytopic1
+  Servers: "localhost"

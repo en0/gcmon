@@ -36,13 +36,16 @@ def build_entry(entry_type: EntryInterface, config: IConfigSection) -> EntryInte
         scope=ScopeEnum.TRANSIENT)
 
     if config.get("MessageBroker:Type") == "RabbitMQ":
-        from gcmon.rabbit_message_broker import RabbitMessageBroker
-        ioc_builder.bind(
-            annotation=MessageBrokerInterface,
-            implementation=RabbitMessageBroker,
-            scope=ScopeEnum.TRANSIENT)
+        from gcmon.rabbit_message_broker import RabbitMessageBroker as MessageBroker
+    elif config.get("MessageBroker:Type") == "Kafka":
+        from gcmon.kafka_message_broker import KafkaMessageBroker as MessageBroker
     else:
         raise RuntimeError("Unsupported message broker.")
+
+    ioc_builder.bind(
+        annotation=MessageBrokerInterface,
+        implementation=MessageBroker,
+        scope=ScopeEnum.TRANSIENT)
 
     provider = ioc_builder.build()
     return provider.get(entry_type)
