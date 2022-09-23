@@ -6,7 +6,7 @@ idna==2.8
 ifaddr==0.1.6
 pika==1.1.0
 pkg-resources==0.0.0
-protobuf==3.10.0
+protobuf==3.18.3
 PyChromecast==4.1.0
 pyioc3==1.1
 PyYAML==5.3
